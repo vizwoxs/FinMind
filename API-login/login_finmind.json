@@ -1,0 +1,12 @@
+{
+  "usuarios": [
+    {
+      "usuario": "vik",
+      "senha": "123"
+    },
+    {
+      "usuario": "Damas",
+      "senha": "abc456"
+    }
+  ]
+}
