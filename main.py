@@ -28,11 +28,16 @@ if modo == "Login":
 
 elif modo == "Cadastro":
     if st.button("Cadastrar"):
-        if fun.salvar_user(usuario, senha):
-            st.success("Cadastro realizado com sucesso! Você já pode fazer login.")
+        if len(identificador) < 3:
+            st.warning("O identificador deve ter pelo menos 3 caracteres.")
+        elif len(senha) < 4:
+            st.warning("A senha deve ter pelo menos 4 caracteres.")
+        elif "@" in identificador and not eh_email_gmail(identificador):
+            st.warning("Apenas e-mails @gmail.com são permitidos.")
+        elif fun.salvar_user(identificador, senha):
+            st.success(" Cadastro realizado com sucesso! Você já pode fazer login.")
         else:
-            st.warning("Este nome de usuário já está em uso.")
-
+            st.warning("Este identificador já está em uso.")
 
 
 
@@ -40,6 +45,7 @@ elif modo == "Cadastro":
 
 
     
+
 
 
 
