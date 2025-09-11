@@ -16,7 +16,7 @@ fe.subtitulo("Sua IA de Gerenciamento Financeiro", size=20)
 modo = st.radio("Escolha uma opção:", ["Login", "Cadastro"])
 
 usuario = st.text_input("Usuário")
-senha = st.text_input("Senha", type="senha")
+senha = st.text_input("Senha", type="password")
 
 if modo == "Login":
     if st.button("Entrar"):
@@ -40,6 +40,7 @@ elif modo == "Cadastro":
 
 
     
+
 
 
 
