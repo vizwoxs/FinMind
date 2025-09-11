@@ -3,6 +3,7 @@ import requests as rq
 import pandas as pd
 import openai
 import Funções.funcoes as fun
+import Funções.funcoes_de_estilizacao as fe
 import json
 
 #api de inteligência artificial
@@ -39,5 +40,6 @@ elif modo == "Cadastro":
 
 
     
+
 
 
