@@ -30,3 +30,13 @@ def carregar_user():# Carrega a lista de usuários do arquivo JSON
             return json.load(arquivo).get("usuarios", []) #retorna a lista de usuários
     except (json.JSONDecodeError, FileNotFoundError): #caso de erro
         return [] #retorna lista vazia
+
+def salvar_user(user, senha): # Salva um novo usuário no arquivo JSON
+    usuarios = carregar_user()
+    if any(u["usuario"] == user for u in usuarios): #ternario
+        return False
+    usuarios.append({"usuario": user, "senha": senha})
+    with open(CAMINHO, "w", encoding="utf-8") as arquivo:
+        json.dump({"usuarios": usuarios}, arquivo, indent=4, ensure_ascii=False) #adiciona dentro do arquivo
+    return True
+
