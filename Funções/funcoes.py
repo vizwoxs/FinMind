@@ -42,3 +42,11 @@ def salvar_user(user, senha): # Salva um novo usuário no arquivo JSON
 
 def validar_login(user, senha): # Valida o login do usuário
     return any(u["usuario"] == user and u["senha"] == senha for u in carregar_user()) #terrnario
+
+def responder_gemini(mensagem): #função que responde usando o Gemini
+    """
+    Usa o Gemini para responder, inicializando o chat se necessário.
+    """
+    if not gemini_configurado or model is None: #se o gemini não estiver configurado ou o modelo for None
+        st.warning("Gemini não está configurado.")
+        return None #aviso
