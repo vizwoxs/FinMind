@@ -3,7 +3,7 @@ import os
 import streamlit as st
 import google.generativeai as genai
 
-GEMINI_API_KEY = "AIzaSyDbUr0HPtRhdkz3R4n5NOL7Ncj2kU_uIf8" #modelo padrão
+GEMINI_API_KEY = "secret_key" #modelo padrão
 
 gemini_configurado = False #se o gemini foi configurado
 model = None 
