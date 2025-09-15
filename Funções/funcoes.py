@@ -162,17 +162,18 @@ def proxima_pergunta(estado):
         return "Se quiser, posso te ajudar a analisar seus gastos ou sugerir investimentos!"
 
 
-def responder_chat(mensagem):
-    """
-    Tenta usar o Gemini e, em caso de falha, usa o fallback local.
-    """
+def responder_chat(mensagem, historico=None):
+    if historico is None:
+        historico = st.session_state.get("messages", [])
     resposta_gemini = responder_gemini(mensagem)
-    
     if resposta_gemini:
-        return resposta_gemini
-    
+        historico.append({"role": "user", "content": mensagem})
+        historico.append({"role": "assistant", "content": resposta_gemini})
+        st.session_state.messages = historico
+        return resposta_gemini, historico
 
-    return responder_fallback(mensagem, st.session_state.messages)[0]
-
+    resposta, historico_atualizado = responder_fallback(mensagem, historico)
+    st.session_state.messages = historico_atualizado
+    return resposta, historico_atualizado
 
 
