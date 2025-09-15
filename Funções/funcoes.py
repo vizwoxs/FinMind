@@ -40,3 +40,5 @@ def salvar_user(user, senha): # Salva um novo usuário no arquivo JSON
         json.dump({"usuarios": usuarios}, arquivo, indent=4, ensure_ascii=False) #adiciona dentro do arquivo
     return True
 
+def validar_login(user, senha): # Valida o login do usuário
+    return any(u["usuario"] == user and u["senha"] == senha for u in carregar_user()) #terrnario
