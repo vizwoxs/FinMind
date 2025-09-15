@@ -8,6 +8,7 @@ GEMINI_API_KEY = "AIzaSyDbUr0HPtRhdkz3R4n5NOL7Ncj2kU_uIf8" #modelo padrão
 gemini_configurado = False #se o gemini foi configurado
 model = None 
 
+#função da funcionalidade da chave
 if GEMINI_API_KEY:
     try:
         genai.configure(api_key=GEMINI_API_KEY)
@@ -19,3 +20,13 @@ if GEMINI_API_KEY:
 
 else:
     st.warning("Nenhuma chave Gemini encontrada. Configure a variável de ambiente GEMINI_API_KEY.") #Aviso se a chave não estiver configurada
+
+#função de login do user
+def carregar_user():# Carrega a lista de usuários do arquivo JSON
+    if not os.path.exists(CAMINHO): #se o usuário não existir
+        return [] #retorna lista vazia
+    try: #caso de certo
+        with open(CAMINHO, "r", encoding="utf-8") as arquivo: #abre o arquivo
+            return json.load(arquivo).get("usuarios", []) #retorna a lista de usuários
+    except (json.JSONDecodeError, FileNotFoundError): #caso de erro
+        return [] #retorna lista vazia
