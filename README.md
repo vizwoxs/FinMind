@@ -54,14 +54,11 @@ FinMind/
 │ main.py
 │ requirements.txt
 │ login_finmind.json
-│ descobertas.txt
+│ anotações.txt
 │
 ├─ funcoes/
 │    ├─ funcoes.py
 │    └─ funcoes_de_estilizacao.py
-│
-├─ assets/
-│    └─ finmindlogo.png
 ```
 
 ---
