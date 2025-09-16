@@ -91,10 +91,4 @@ Sinta-se à vontade para abrir issues, sugerir melhorias ou enviar pull requests
 
 ---
 
-## Licença
-
-Este projeto está sob a licença MIT.
-
----
-
 **FinMind** — Seu assistente financeiro inteligente! - vizwoxs & DEVdamas9
