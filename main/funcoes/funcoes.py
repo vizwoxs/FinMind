@@ -1,4 +1,4 @@
-
+import pandas as pd
 import streamlit as st
 from funcoes import funcoes as fun
 from funcoes import funcoes_de_estilizacao as fe
