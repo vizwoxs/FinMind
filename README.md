@@ -4,7 +4,7 @@ FinMind é um assistente virtual de finanças pessoais, desenvolvido em Python c
 
 ---
 
-## ✨ Funcionalidades
+## Funcionalidades
 
 - **Chat inteligente** com IA Gemini (Google Generative AI)
 - **Login de usuário** com cadastro e validação
@@ -17,7 +17,7 @@ FinMind é um assistente virtual de finanças pessoais, desenvolvido em Python c
 
 ---
 
-## 🚀 Como rodar o projeto
+## Como rodar o projeto
 
 1. **Clone o repositório:**
    ```bash
@@ -41,7 +41,7 @@ FinMind é um assistente virtual de finanças pessoais, desenvolvido em Python c
 
 ---
 
-## 🗂 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 FinMind/
@@ -60,7 +60,7 @@ FinMind/
 
 ---
 
-## 📝 Observações Técnicas
+## Observações Técnicas
 
 - O arquivo `login_finmind.json` armazena usuários e senhas em formato JSON.
 - O parâmetro `indent=4` deixa o JSON legível.
@@ -71,7 +71,7 @@ FinMind/
 
 ---
 
-## 💡 Dicas de Uso
+##  Dicas de Uso
 
 - Para trocar o background, altere a URL na função `background_login` em `funcoes_de_estilizacao.py`.
 - Para personalizar a IA, edite o prompt na função `responder_gemini` em `funcoes.py`.
@@ -79,13 +79,13 @@ FinMind/
 
 ---
 
-## 👩‍💻 Contribuição
+## Contribuição
 
 Sinta-se à vontade para abrir issues, sugerir melhorias ou enviar pull requests!
 
 ---
 
-## 📄 Licença
+## Licença
 
 Este projeto está sob a licença MIT.
 
