@@ -106,5 +106,23 @@ def responder_fallback(mensagem, historico):
         "default": "Me conte mais sobre sua situação financeira: renda, dívidas, metas..."
     }
 
+def botao_reiniciar_chat():
+    if "historico_conversas" not in st.session_state:
+        st.session_state.historico_conversas = []
+    if st.button("Novo Chat"):
+        # Salva o chat atual no histórico, se houver mensagens
+        if st.session_state.chat_history:
+            st.session_state.historico_conversas.append(list(st.session_state.chat_history))
+        st.session_state.chat_history = []
+        st.rerun()
 
-    
+def mostrar_historico_conversas():
+    for i, conversa in enumerate(st.session_state.historico_conversas):
+        st.markdown(f"**Chat {i+1}:**")
+        for msg in conversa:
+            st.markdown(f"- {msg['role']}: {msg['content']}")
+
+def remover_tags_html(texto):
+    return re.sub(r'<.*?>', '', texto)
+
+
