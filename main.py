@@ -1,92 +1,110 @@
-
-import pandas as pd
+import json
+import os
 import streamlit as st
-import Funções.funcoes as fun
-import Funções.funcoes_de_estilizacao as fe
+import google.generativeai as genai
+import re
 
-st.set_page_config(page_title="FinMind", layout="wide")
+# Use o modelo padrão disponível (exemplo: gemini-1.0-pro)
+GEMINI_API_KEY = "AIzaSyBWPQm57MooUVfRuqpEglEFewIX6HXvTMU"
 
+gemini_configurado = False #
+model = None
 
-def mostrar_chat(chat_history):
-    for msg in chat_history:
-        if msg["role"] == "user":
-            st.markdown(f"""
-            <div style='background-color:#2D2D2D; color:#FFFFFF; 
-                        padding:10px 14px; border-radius:18px; 
-                        margin:8px 0; max-width:60%; 
-                        font-family:Arial, sans-serif; font-size:14px;
-                        float:right; clear:both;'>
-                {msg['content']}
-            </div>
-            """, unsafe_allow_html=True)
+if GEMINI_API_KEY:
+    try:
+        genai.configure(api_key=GEMINI_API_KEY)
 
-        elif msg["role"] == "assistant":
-            st.markdown(f"""
-            <div style='background-color:#1E1E1E; color:#E5E5E5; 
-                        padding:10px 14px; border-radius:18px; 
-                        margin:8px 0; max-width:60%; 
-                        font-family:Arial, sans-serif; font-size:14px;
-                        float:left; clear:both;'>
-                {msg['content']}
-            </div>
-            """, unsafe_allow_html=True)
+        model = genai.GenerativeModel() #modelo da ia
+        gemini_configurado = True # Indica que o Gemini foi configurado com sucesso
+    except Exception as e:
+        st.error(f"Erro ao configurar Gemini: {e}") # Indica que houve um erro na configuração
 
-
-if "usuario_logado" not in st.session_state:
-    st.session_state.usuario_logado = None
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
-if "historico_financeiro" not in st.session_state:
-    @st.cache_data
-    def carregar_dados_exemplo():
-        return pd.DataFrame({
-            "Data": ["2025-09-01", "2025-09-05", "2025-09-10"],
-            "Categoria": ["Alimentação", "Transporte", "Lazer"],
-            "Valor": [120.50, 45.00, 80.00]
-        })
-    st.session_state.historico_financeiro = carregar_dados_exemplo()
-
-
-if st.session_state.usuario_logado is None:
-    fe.titulo("FinMind", size=60, color="white")
-    fe.subtitulo("Sua IA de Gerenciamento Financeiro", size=20)
-
-    modo = st.radio("Escolha uma opção:", ["Login", "Cadastro"])
-    usuario = st.text_input("Usuário")
-    senha = st.text_input("Senha", type="password")
-
-    if modo == "Login":
-        if st.button("Entrar"):
-            if fun.validar_login(usuario, senha):
-                st.session_state.usuario_logado = usuario
-                st.rerun()
-            else:
-                st.error("Usuário ou senha inválidos.")
-
-    elif modo == "Cadastro":
-        if st.button("Cadastrar"):
-            if len(usuario) < 3:
-                st.warning("O identificador deve ter pelo menos 3 caracteres.")
-            elif len(senha) < 4:
-                st.warning("A senha deve ter pelo menos 4 caracteres.")
-            elif "@" in usuario and not fun.eh_email_gmail(usuario):
-                st.warning("Apenas e-mails @gmail.com são permitidos.")
-            elif fun.salvar_user(usuario, senha):
-                st.success("Cadastro realizado com sucesso! Faça login.")
-            else:
-                st.warning("Este identificador já está em uso.")
 else:
+    st.warning("Nenhuma chave Gemini encontrada. Configure a variável de ambiente GEMINI_API_KEY.") # Aviso se a chave não estiver configurada
 
+# Caminho para o arquivo JSON que armazena os usuários
+CAMINHO = os.path.join(os.path.dirname(__file__), "../API-login/login_finmind.json")
 
-    fe.titulo(f"Olá, {st.session_state.usuario_logado}!")
-    fe.subtitulo("Digite sua dúvida financeira abaixo:")
+def carregar_user():# Carrega a lista de usuários do arquivo JSON
+    if not os.path.exists(CAMINHO): #se o usuário não existir
+        return [] #retorna lista vazia
+    try: #caso de certo
+        with open(CAMINHO, "r", encoding="utf-8") as arquivo: #abre o arquivo
+            return json.load(arquivo).get("usuarios", []) #retorna a lista de usuários
+    except (json.JSONDecodeError, FileNotFoundError): #caso de erro
+        return [] #retorna lista vazia
 
-    user_input = st.chat_input("Pergunte algo sobre seu dinheiro...")
+def salvar_user(user, senha): # Salva um novo usuário no arquivo JSON
+    usuarios = carregar_user()
+    if any(u["usuario"] == user for u in usuarios): #ternario
+        return False
+    usuarios.append({"usuario": user, "senha": senha})
+    with open(CAMINHO, "w", encoding="utf-8") as arquivo:
+        json.dump({"usuarios": usuarios}, arquivo, indent=4, ensure_ascii=False) #adiciona dentro do arquivo
+    return True
 
-    if user_input:
-        resposta, st.session_state.chat_history = fun.responder_chat(
-            user_input, st.session_state.chat_history
+def validar_login(user, senha): # Valida o login do usuário
+    return any(u["usuario"] == user and u["senha"] == senha for u in carregar_user()) #terrnario
+
+def responder_gemini(prompt):
+    if not gemini_configurado or model is None:
+        return None
+    try:
+        descricao_ia = (
+            "Você é um assistente financeiro virtual chamado FinMind, "
+            "especialista em finanças pessoais, que responde sempre em português brasileiro, "
+            "de forma clara, amigável e objetiva. "
+            "Ajude o usuário a organizar suas finanças, tirar dúvidas e alcançar metas." 
+            "Forneça dicas práticas e estratégias financeiras personalizadas."
+            "Você não é capaz de responder perguntas que não sejam do ramo financeiro"
+            "Não é necessário fazer uma saudação inicial em todas as respostas, vá direto ao ponto."
+            "Lembre-se de conversas anteriores para manter o contexto."
+            "Seja empático e encorajador, ajudando o usuário a se sentir no controle de suas finanças." 
+            "Faça calculos quando necessário."
         )
+        prompt_final = f"{descricao_ia}\n\nPergunta do usuário: {prompt}"
+        response = model.generate_content(prompt_final)
+        return response.text
+    except Exception as e:
+        st.warning(f"Erro ao gerar resposta com Gemini: {e}")
+        return None
 
- 
-    mostrar_chat(st.session_state.chat_history)
+def responder_chat(mensagem, historico=None):
+    """
+    Tenta usar o Gemini e, em caso de falha, usa o fallback local.
+    Sempre retorna (resposta, historico_atualizado).
+    """
+    if historico is None:
+        historico = st.session_state.get("chat_history", [])
+    resposta_gemini = responder_gemini(mensagem)
+    if resposta_gemini:
+        historico.append({"role": "user", "content": remover_tags_html(mensagem)})
+        historico.append({"role": "assistant", "content": remover_tags_html(resposta_gemini)})
+        st.session_state.chat_history = historico
+        return resposta_gemini, historico
+
+    resposta, historico_atualizado = responder_fallback(mensagem, historico)
+    st.session_state.chat_history = historico_atualizado
+    return resposta, historico_atualizado
+
+def responder_fallback(mensagem, historico):
+    mensagem_lower = mensagem.lower()
+    respostas = {
+        "saudacao": "Oi! Que bom te ver por aqui. Como posso te ajudar com suas finanças hoje?",
+        "ajuda": "Claro! Me diz com o que você precisa de ajuda: orçamento, dívidas, metas ou outra coisa?",
+        "orçamento": "Regra 50-30-20: 50% necessidades, 30% desejos, 20% investimentos.",
+        "dívida": "Liste suas dívidas, priorize as de maior juros e evite novas.",
+        "investir": "Comece pela reserva de emergência. Depois pense em Tesouro ou ETFs.",
+        "economizar": "Use lista de compras, corte delivery, cancele assinaturas desnecessárias.",
+        "cartão": "Use até 30% do limite e pague sempre a fatura inteira.",
+        "metas": "Me conte uma meta e vamos traçar um plano juntos.",
+        "imposto": "Se for IR, lembre-se de declarar rendimentos, investimentos e despesas dedutíveis.",
+        "emoções": "É normal sentir ansiedade com dinheiro. Vamos organizar passo a passo.",
+        "dicas": "Prefere dicas para economizar, investir ou quitar dívidas?",
+        "simular": "Me diga quanto quer juntar e em quantos meses para eu calcular.",
+        "analisar": "Posso analisar seus gastos e sugerir cortes. Quer ver um gráfico?",
+        "default": "Me conte mais sobre sua situação financeira: renda, dívidas, metas..."
+    }
+
+
+    
