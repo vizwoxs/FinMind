@@ -1,7 +1,7 @@
 import pandas as pd
 import streamlit as st
-import funcoes.funcoes as fun
-import funcoes.funcoes_de_estilizacao as fe
+import Funções.funcoes as fun
+import Funções.funcoes_de_estilizacao as fe
 import time
 
 #titulo e largura
@@ -95,3 +95,4 @@ else: #barra lateral e chat
         )
 
     mostrar_chat(st.session_state.chat_historico)
+
