@@ -1,2 +1,5 @@
 indent=4 : Deixa o arquivo json mais legivel
 ensure_ascii=False : Permite acentos e caracteres especiais
+json.dump() é uma função da biblioteca padrão json do Python que serve para salvar dados em formato JSON dentro de um arquivo
+unsafe_allow_html=True é um parâmetro usado na biblioteca Streamlit, que permite que você insira código HTML diretamente
+st.session_state é uma funcionalidade essencial do Streamlit que permite armazenar e gerenciar dados entre interações
