@@ -1,3 +1,9 @@
+<p align="center">
+  <img src="https://i.postimg.cc/Zn0BxJ6k/FinMind.png" alt="FinMind Banner" width="1000"/>
+</p>
+
+
+
 # FinMind
 
 FinMind é um assistente virtual de finanças pessoais, desenvolvido em Python com Streamlit e integração à IA generativa Gemini (Google Generative AI). O projeto oferece um chat inteligente para tirar dúvidas financeiras, organizar gastos, simular metas e muito mais, com interface moderna, login seguro e histórico de conversas.
