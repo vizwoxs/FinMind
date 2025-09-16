@@ -4,10 +4,10 @@ import streamlit as st
 import google.generativeai as genai
 import re
 
-# Use o modelo padrão disponível (exemplo: gemini-1.0-pro)
-GEMINI_API_KEY = "AIzaSyBWPQm57MooUVfRuqpEglEFewIX6HXvTMU"
 
-gemini_configurado = False #
+GEMINI_API_KEY = "secret_key"
+
+gemini_configurado = False 
 model = None
 
 if GEMINI_API_KEY:
@@ -124,5 +124,6 @@ def mostrar_historico_conversas():
 
 def remover_tags_html(texto):
     return re.sub(r'<.*?>', '', texto)
+
 
 
