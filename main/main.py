@@ -1,7 +1,7 @@
 import pandas as pd
 import streamlit as st
-import funcoes.funcoes as fun
-import funcoes.funcoes_de_estilizacao as fe
+from funcoes import funcoes as fun
+from funcoes import funcoes_de_estilizacao as fe
 import time
 
 #titulo e largura
@@ -49,17 +49,24 @@ if st.session_state.usuario_logado is None:
             else:
                 st.error("Usuário ou senha inválidos.")
 
+
     elif modo == "Cadastro":
         if st.button("Cadastrar"):
-            if len(usuario) < 3:
+            if not usuario or not senha:
+                st.warning("Preencha usuário e senha.")
+            elif len(usuario) < 3:
                 st.warning("O identificador deve ter pelo menos 3 caracteres.")
             elif len(senha) < 4:
-                st.warning("A senha deve ter pelo menos 4 caracteres.")
-            elif fun.salvar_user(usuario, senha):
-                st.success("Cadastro realizado com sucesso! Faça login.")
+                    st.warning("A senha deve ter pelo menos 4 caracteres.")
             else:
-                st.warning("Este identificador já está em uso.")
-    fe.footer()
+                try:
+                    if fun.salvar_user(usuario, senha):
+                        st.success("Cadastro realizado com sucesso! Faça login.")
+                    else:
+                        st.warning("Este identificador já está em uso.")
+                except Exception as e:
+                    st.error(f"Erro ao cadastrar: {e}")
+
 
 else: #barra lateral e chat
 
